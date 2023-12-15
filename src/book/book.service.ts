@@ -16,46 +16,50 @@ export class BookService {
     ) { }
 
     async findAll(): Promise<Book[]> {
-        const books = await this.bookModel.find();
-        return books;
+        return await this.bookModel.find();
+
     }
 
     async create(book: Book): Promise<Book> {
-        const res = await this.bookModel.create(book)
-        return res;
+        return await this.bookModel.create(book)
+
     }
 
     async findById(id: string): Promise<Book> {
 
-        try {
+        return await this.bookModel.findById(id)
 
-            const book = await this.bookModel.findById(id)
-
-            if (!book) {
-                throw new NotFoundException('Book not found')
-            }
+        // if (!book) {
+        //     throw new NotFoundException('Book not found')
+        // }
 
 
-            return book;
-        } catch {
-            throw new NotFoundException('Invalid book ID');
-        }
+        // return book;
+
+        // try {
 
 
-
+        // } catch {
+        //     throw new NotFoundException('Invalid book ID');
+        // }
     }
 
     async updateById(id: string, book: Book): Promise<Book> {
 
-        try {
+        return await this.bookModel.findByIdAndUpdate(id, book, {
+            new: true,
+            runValidators: true
+        })
 
-            return await this.bookModel.findByIdAndUpdate(id, book, {
-                new: true,
-                runValidators: true
-            })
-        } catch {
-            throw new NotFoundException('Invalid book ID');
-        }
+        // try {
+
+        //     return await this.bookModel.findByIdAndUpdate(id, book, {
+        //         new: true,
+        //         runValidators: true
+        //     })
+        // } catch {
+        //     throw new NotFoundException('Invalid book ID');
+        // }
 
     }
 
