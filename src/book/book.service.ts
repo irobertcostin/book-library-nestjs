@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schemas/book.schema';
 import * as mongoose from 'mongoose';
 import BookResponse from './dto/book-response';
-
+import { Query } from "express-serve-static-core";
 
 
 
@@ -15,10 +15,26 @@ export class BookService {
         private bookModel: mongoose.Model<Book>
     ) { }
 
-    async findAll(): Promise<Book[]> {
-        return await this.bookModel.find();
+    async findAll(query: Query): Promise<Book[]> {
+
+        const resPerPage = 2
+        const currentPage = Number(query.page) || 1
+        const skip = resPerPage * (currentPage - 1)
+
+
+
+        const keyword = query.keyword ? {
+            title: {
+                $regex: query.keyword,
+                $options: 'i'
+            }
+        } : {}
+
+        const books = await this.bookModel.find({ ...keyword }).limit(resPerPage).skip(skip)
+        return books
 
     }
+
 
     async create(book: Book): Promise<Book> {
         return await this.bookModel.create(book)
@@ -27,21 +43,14 @@ export class BookService {
 
     async findById(id: string): Promise<Book> {
 
-        return await this.bookModel.findById(id)
 
-        // if (!book) {
-        //     throw new NotFoundException('Book not found')
-        // }
+        const book = await this.bookModel.findById(id)
 
-
-        // return book;
-
-        // try {
-
-
-        // } catch {
-        //     throw new NotFoundException('Invalid book ID');
-        // }
+        if (book) {
+            return book
+        } else {
+            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
+        }
     }
 
     async updateById(id: string, book: Book): Promise<Book> {
@@ -50,16 +59,6 @@ export class BookService {
             new: true,
             runValidators: true
         })
-
-        // try {
-
-        //     return await this.bookModel.findByIdAndUpdate(id, book, {
-        //         new: true,
-        //         runValidators: true
-        //     })
-        // } catch {
-        //     throw new NotFoundException('Invalid book ID');
-        // }
 
     }
 
