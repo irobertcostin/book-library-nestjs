@@ -1,5 +1,6 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsString, IsStrongPassword, MinLength, isEnum } from "class-validator"
 import { MaritalStatus } from "../schemas/users.schema"
+import { Transform } from "class-transformer"
 
 
 
