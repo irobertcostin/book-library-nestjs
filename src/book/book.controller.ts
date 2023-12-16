@@ -28,17 +28,11 @@ export class BookController {
     @Get(":id")
     async getBook(@Param('id') id: string): Promise<Book> {
 
-
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new HttpException('Invalid book ID', HttpStatus.BAD_REQUEST)
-        }
-
         const book = await this.bookService.findById(id);
-
         return book;
 
-
     }
+
 
     @Post('new')
 
@@ -46,13 +40,10 @@ export class BookController {
         return this.bookService.create(book)
     }
 
+
     @Put('edit/:id')
 
     async updateBook(@Body() book: UpdateBookDto, @Param('id') id: string): Promise<Book> {
-
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new HttpException('Invalid book ID', HttpStatus.BAD_REQUEST)
-        }
 
         return this.bookService.updateById(id, book)
     }
@@ -61,11 +52,6 @@ export class BookController {
     @Delete('delete/:id')
 
     async delete(@Param('id') id: string): Promise<BookResponse> {
-
-
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new HttpException('Invalid book ID', HttpStatus.BAD_REQUEST)
-        }
 
         return this.bookService.deleteById(id)
     }

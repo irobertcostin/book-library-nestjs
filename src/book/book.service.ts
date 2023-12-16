@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schemas/book.schema';
 import * as mongoose from 'mongoose';
@@ -41,8 +41,15 @@ export class BookService {
 
     }
 
+
+
     async findById(id: string): Promise<Book> {
 
+        const isValidId = mongoose.isValidObjectId(id);
+
+        if (!isValidId) {
+            throw new BadRequestException('ID not valid')
+        }
 
         const book = await this.bookModel.findById(id)
 
@@ -53,7 +60,16 @@ export class BookService {
         }
     }
 
+
+
+
     async updateById(id: string, book: Book): Promise<Book> {
+
+        const isValidId = mongoose.isValidObjectId(id);
+
+        if (!isValidId) {
+            throw new BadRequestException('ID not valid')
+        }
 
         return await this.bookModel.findByIdAndUpdate(id, book, {
             new: true,
@@ -67,24 +83,24 @@ export class BookService {
     async deleteById(id: string): Promise<BookResponse> {
 
 
-        try {
+        const isValidId = mongoose.isValidObjectId(id);
 
-
-            const result = await this.bookModel.findByIdAndDelete(id);
-
-            if (result) {
-                let response: BookResponse = {
-                    message: `Book with id ${id} deleted`
-                }
-
-                return response;
-            } else {
-                throw new NotFoundException('Invalid book IDd');
-            }
-        } catch (error) {
-            throw new NotFoundException('Invalid book ID');
+        if (!isValidId) {
+            throw new BadRequestException('ID not valid')
         }
 
+
+        const result = await this.bookModel.findByIdAndDelete(id);
+
+        if (result) {
+            let response: BookResponse = {
+                message: `Book with id ${id} deleted`
+            }
+
+            return response;
+        } else {
+            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
+        }
 
     }
 
