@@ -1,27 +1,29 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schemas/book.schema';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import BookResponse from './dto/book-response';
 import * as mongoose from 'mongoose';
+import { Query as ExpressQuery } from "express-serve-static-core";
+
 
 @Controller('books')
 export class BookController {
 
     constructor(private bookService: BookService) { }
 
+
     @Get()
-    async getAllBooks(): Promise<Book[]> {
+    async getAllBooks(@Query() query: ExpressQuery): Promise<Book[]> {
 
-        const books = await this.bookService.findAll();
+        const books = await this.bookService.findAll(query);
 
-        if (books.length < 1) {
-            throw new HttpException('No books available', HttpStatus.NOT_FOUND)
-        }
-
-        return this.bookService.findAll();
+        return books;
     }
+
+
+
 
     @Get(":id")
     async getBook(@Param('id') id: string): Promise<Book> {
@@ -33,11 +35,7 @@ export class BookController {
 
         const book = await this.bookService.findById(id);
 
-        if (book) {
-            return book
-        } else {
-            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
-        }
+        return book;
 
 
     }
@@ -71,6 +69,9 @@ export class BookController {
 
         return this.bookService.deleteById(id)
     }
+
+
+
 
 
 
