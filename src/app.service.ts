@@ -7,5 +7,3 @@ export class AppService {
   }
 }
 
-
-// all logic here , database, etc

@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schemas/book.schema';
 import * as mongoose from 'mongoose';
 import BookResponse from './dto/book-response';
 import { Query } from "express-serve-static-core";
+import { User } from 'src/users/schemas/users.schema';
 
 
 
@@ -36,8 +37,10 @@ export class BookService {
     }
 
 
-    async create(book: Book): Promise<Book> {
-        return await this.bookModel.create(book)
+    async create(book: Book, user: User): Promise<Book> {
+
+        const data = Object.assign(book, { user: user._id })
+        return await this.bookModel.create(data)
 
     }
 
@@ -80,8 +83,7 @@ export class BookService {
 
 
 
-    async deleteById(id: string): Promise<BookResponse> {
-
+    async deleteById(id: string, user: User): Promise<BookResponse> {
 
         const isValidId = mongoose.isValidObjectId(id);
 
@@ -89,17 +91,25 @@ export class BookService {
             throw new BadRequestException('ID not valid')
         }
 
+        const book = await this.bookModel.findById(id)
+
+        if (!book) {
+            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
+        }
+
+        if (user._id.toString() !== book.user.toString()) {
+            throw new UnauthorizedException("This is not yours to delete")
+        }
 
         const result = await this.bookModel.findByIdAndDelete(id);
 
         if (result) {
+
             let response: BookResponse = {
                 message: `Book with id ${id} deleted`
             }
 
             return response;
-        } else {
-            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
         }
 
     }
