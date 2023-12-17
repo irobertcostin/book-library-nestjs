@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsStrongPasswordOptions } from "class-validator";
-
+import { Document } from "mongoose";
 
 export enum MaritalStatus {
     SINGLE = "Single",
@@ -16,7 +16,7 @@ export enum MaritalStatus {
 
 
 
-export class User {
+export class User extends Document {
     @Prop()
     first_name: string;
 
