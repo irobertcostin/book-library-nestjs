@@ -7,9 +7,12 @@ import { JwtModule } from "@nestjs/jwt"
 import { PassportModule } from "@nestjs/passport"
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
+import { EmailInterceptor } from 'src/interceptors/email.interceptor';
+
+
 
 @Module({
-  providers: [UsersService, JwtStrategy],
+  providers: [UsersService, JwtStrategy, EmailInterceptor],
   controllers: [UsersController],
   imports: [
 

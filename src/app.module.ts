@@ -5,6 +5,9 @@ import { BookModule } from './book/book.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
+import { IdValidationInterceptor } from './interceptors/id-validation.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
 
 @Module({
   imports: [
@@ -16,7 +19,11 @@ import { UsersModule } from './users/users.module';
     BookModule,
     UsersModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: IdValidationInterceptor
+    }],
 })
 export class AppModule { }
 
