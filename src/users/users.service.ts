@@ -53,11 +53,17 @@ export class UsersService {
             throw new UnauthorizedException('Invalid email address')
         }
 
-        const istPasswordMatched = await bcrypt.compare(password, user.password)
+        const isPasswordMatched = await bcrypt.compare(password, user.password)
+
+        if (!isPasswordMatched) {
+            throw new UnauthorizedException('Invalid password')
+        }
 
         const token = this.jwtService.sign({ id: user._id })
 
         return { token }
 
     }
+
+
 }

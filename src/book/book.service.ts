@@ -48,11 +48,7 @@ export class BookService {
 
     async findById(id: string): Promise<Book> {
 
-        const isValidId = mongoose.isValidObjectId(id);
 
-        if (!isValidId) {
-            throw new BadRequestException('ID not valid')
-        }
 
         const book = await this.bookModel.findById(id)
 
@@ -68,12 +64,6 @@ export class BookService {
 
     async updateById(id: string, book: Book): Promise<Book> {
 
-        const isValidId = mongoose.isValidObjectId(id);
-
-        if (!isValidId) {
-            throw new BadRequestException('ID not valid')
-        }
-
         return await this.bookModel.findByIdAndUpdate(id, book, {
             new: true,
             runValidators: true
@@ -84,12 +74,6 @@ export class BookService {
 
 
     async deleteById(id: string, user: User): Promise<BookResponse> {
-
-        const isValidId = mongoose.isValidObjectId(id);
-
-        if (!isValidId) {
-            throw new BadRequestException('ID not valid')
-        }
 
         const book = await this.bookModel.findById(id)
 
