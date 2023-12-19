@@ -6,7 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { IdValidationInterceptor } from './interceptors/id-validation.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+
+
+
 
 
 @Module({
@@ -23,7 +26,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     {
       provide: APP_INTERCEPTOR,
       useClass: IdValidationInterceptor
-    }],
+    }
+  ],
 })
 export class AppModule { }
 
