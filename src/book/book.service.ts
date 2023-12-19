@@ -48,14 +48,12 @@ export class BookService {
 
     async findById(id: string): Promise<Book> {
 
-
-
         const book = await this.bookModel.findById(id)
 
         if (book) {
             return book
         } else {
-            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
+            throw new NotFoundException(`No book with ID ${id} found`)
         }
     }
 
@@ -73,12 +71,14 @@ export class BookService {
 
 
 
+
+
     async deleteById(id: string, user: User): Promise<BookResponse> {
 
         const book = await this.bookModel.findById(id)
 
         if (!book) {
-            throw new HttpException(`No book with ID ${id} found`, HttpStatus.NOT_FOUND)
+            throw new NotFoundException(`No book with ID ${id} found`)
         }
 
         if (user._id.toString() !== book.user.toString()) {
