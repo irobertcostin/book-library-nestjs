@@ -23,6 +23,10 @@ export class BookController {
 
         const books = await this.bookService.findAll(query);
 
+        if (!books) {
+            throw new NotFoundException(`No data found`)
+        }
+
         return books;
     }
 
@@ -33,6 +37,11 @@ export class BookController {
     async getBook(@Param('id') id: string): Promise<Book> {
 
         const book = await this.bookService.findById(id);
+
+        if (!book) {
+            throw new NotFoundException(`Object with ${id} could not be found`)
+        }
+
         return book;
 
     }
@@ -51,10 +60,10 @@ export class BookController {
 
 
     @Put('edit/:id')
+    @UseGuards(AuthGuard())
+    async updateBook(@Body() book: UpdateBookDto, @Param('id') id: string, @Req() req): Promise<Book> {
 
-    async updateBook(@Body() book: UpdateBookDto, @Param('id') id: string): Promise<Book> {
-
-        return this.bookService.updateById(id, book)
+        return this.bookService.updateById(id, book, req.user)
     }
 
 

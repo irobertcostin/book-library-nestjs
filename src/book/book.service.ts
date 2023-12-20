@@ -60,7 +60,20 @@ export class BookService {
 
 
 
-    async updateById(id: string, book: Book): Promise<Book> {
+    async updateById(id: string, book: Book, user: User): Promise<Book> {
+
+        console.log(user);
+
+        const attempt = await this.bookModel.findById(id)
+
+        if (!attempt) {
+            throw new NotFoundException(`No book with ID ${id} found`)
+        }
+
+
+        if (user._id.toString() !== attempt.user.toString()) {
+            throw new UnauthorizedException("This is not yours to edit")
+        }
 
         return await this.bookModel.findByIdAndUpdate(id, book, {
             new: true,
