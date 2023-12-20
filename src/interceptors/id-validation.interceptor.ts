@@ -10,14 +10,14 @@ export class IdValidationInterceptor implements NestInterceptor {
 
         const request = context.switchToHttp().getRequest();
 
-        const id = request.params.id
-        const isValidId = mongoose.isValidObjectId(id);
+        if (request.params.id) {
+            const id = request.params.id
+            const isValidId = mongoose.isValidObjectId(id);
 
-        if (!isValidId) {
-            throw new HttpException('Invalid ID type test', HttpStatus.BAD_REQUEST)
+            if (!isValidId) {
+                throw new HttpException('Invalid ID type test', HttpStatus.BAD_REQUEST)
+            }
         }
-
-
 
         return next.handle()
     }
