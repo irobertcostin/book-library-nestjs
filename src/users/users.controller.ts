@@ -2,7 +2,7 @@ import { Controller, Post, Body, Put, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login.dto';
-import { EmailInterceptor } from 'src/interceptors/email.interceptor';
+import { EmailInterceptor } from '../interceptors/email.interceptor';
 
 
 
