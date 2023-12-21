@@ -62,7 +62,7 @@ export class BookService {
 
     async updateById(id: string, book: Book, user: User): Promise<Book> {
 
-        console.log(user);
+
 
         const attempt = await this.bookModel.findById(id)
 
